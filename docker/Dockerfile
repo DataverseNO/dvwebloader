@@ -3,7 +3,7 @@ FROM docker.io/library/nginx:latest
 ENV NGINX_HTTP_PORT=80
 ENV NGINX_HTTPS_PORT=443
 
-RUN apt update && apt install wget
+RUN apt update && apt install -y --no-install-recommends wget pandoc
 
 # Copy the template file to the container
 COPY docker/conf/nginx.conf.template /etc/nginx/templates/nginx.conf
@@ -17,3 +17,8 @@ COPY .. /app
 RUN chmod +x /app/localinstall.sh \
     && cd /app/src \
     && /app/localinstall.sh
+
+RUN pandoc /app/README.md -o /usr/share/nginx/html/index.html
+
+RUN mkdir -p /usr/share/nginx/html/src \
+    && cp -r /app/src /usr/share/nginx/html/src/dvwebloader
